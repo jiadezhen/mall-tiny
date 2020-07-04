@@ -6,31 +6,37 @@ spring:
     url: jdbc:mysql://localhost:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
     password: root
-    redis:
-      host: localhost # Redis\u670D\u52A1\u5668\u5730\u5740
-      database: 0 # Redis\u6570\u636E\u5E93\u7D22\u5F15\uFF08\u9ED8\u8BA4\u4E3A0\uFF09
-      port: 6379 # Redis\u670D\u52A1\u5668\u8FDE\u63A5\u7AEF\u53E3
-      password: # Redis\u670D\u52A1\u5668\u8FDE\u63A5\u5BC6\u7801\uFF08\u9ED8\u8BA4\u4E3A\u7A7A\uFF09
-      jedis:
-        pool:
-          max-active: 8 # \u8FDE\u63A5\u6C60\u6700\u5927\u8FDE\u63A5\u6570\uFF08\u4F7F\u7528\u8D1F\u503C\u8868\u793A\u6CA1\u6709\u9650\u5236\uFF09
-          max-wait: -1ms # \u8FDE\u63A5\u6C60\u6700\u5927\u963B\u585E\u7B49\u5F85\u65F6\u95F4\uFF08\u4F7F\u7528\u8D1F\u503C\u8868\u793A\u6CA1\u6709\u9650\u5236\uFF09
-          max-idle: 8 # \u8FDE\u63A5\u6C60\u4E2D\u7684\u6700\u5927\u7A7A\u95F2\u8FDE\u63A5
-          min-idle: 0 # \u8FDE\u63A5\u6C60\u4E2D\u7684\u6700\u5C0F\u7A7A\u95F2\u8FDE\u63A5
-      timeout: 3000ms # \u8FDE\u63A5\u8D85\u65F6\u65F6\u95F4\uFF08\u6BEB\u79D2\uFF09
+  redis:
+    host: localhost # Redis服务器地址
+    database: 0 # Redis数据库索引（默认为0）
+    port: 6379 # Redis服务器连接端口
+    password: # Redis服务器连接密码（默认为空）
+    jedis:
+      pool:
+        max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1ms # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 8 # 连接池中的最大空闲连接
+        min-idle: 0 # 连接池中的最小空闲连接
+    timeout: 3000ms # 连接超时时间（毫秒）
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+      cluster-nodes: 127.0.0.1:9300 # es的连接地址及端口号
+      cluster-name: elasticsearch # es集群的名称
 
 mybatis:
   mapper-locations:
     - classpath:mapper/*.xml
     - classpath*:com/**/mapper/*.xml
 
-# \u81EA\u5B9A\u4E49redis key
+# 自定义redis key
 redis:
   key:
     prefix:
       authCode: "portal:authCode:"
     expire:
-      authCode: 120 # \u9A8C\u8BC1\u7801\u8D85\u671F\u65F6\u95F4
+      authCode: 120 # 验证码超期时间
 
 # 自定义jwt key
 jwt:
@@ -38,5 +44,3 @@ jwt:
   secret: mySecret #JWT加解密使用的密钥
   expiration: 604800 #JWT的超期限时间(60*60*24)
   tokenHead: Bearer  #JWT负载中拿到开头
-
-
