@@ -32,4 +32,11 @@ redis:
     expire:
       authCode: 120 # \u9A8C\u8BC1\u7801\u8D85\u671F\u65F6\u95F4
 
+# 自定义jwt key
+jwt:
+  tokenHeader: Authorization #JWT存储的请求头
+  secret: mySecret #JWT加解密使用的密钥
+  expiration: 604800 #JWT的超期限时间(60*60*24)
+  tokenHead: Bearer  #JWT负载中拿到开头
+
 

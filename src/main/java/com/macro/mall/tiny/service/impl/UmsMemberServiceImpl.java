@@ -7,7 +7,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UmsMemberServiceImpl implements UmsMemberService {
     @Autowired
     private RedisService redisService;
