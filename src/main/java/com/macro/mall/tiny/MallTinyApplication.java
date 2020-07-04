@@ -3,7 +3,9 @@ package com.macro.mall.tiny;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @SpringBootApplication
 @MapperScan({"com.macro.mall.tiny.mbg.mapper","com.macro.mall.tiny.dao"})
 public class MallTinyApplication {
