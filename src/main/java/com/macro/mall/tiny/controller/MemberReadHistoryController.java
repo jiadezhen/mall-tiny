@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * 会员商品浏览记录管理Controller
  */
+@CrossOrigin
 @Controller
 @Api(tags = "会员商品浏览记录管理")
 @RequestMapping("/member/readHistory")

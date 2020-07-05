@@ -5,15 +5,13 @@ import com.macro.mall.tiny.service.OmsPortalOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 订单管理Controller
  * Created by macro on 2018/8/30.
  */
+@CrossOrigin
 @RestController
 @Api(tags = "订单管理")
 @RequestMapping("/order")

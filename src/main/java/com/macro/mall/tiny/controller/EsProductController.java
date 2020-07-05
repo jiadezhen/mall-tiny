@@ -16,6 +16,7 @@ import java.util.List;
  * 搜索商品管理Controller
  * Created by macro on 2018/6/19.
  */
+@CrossOrigin
 @RestController
 @Api(tags = "搜索商品管理")
 @RequestMapping("/esProduct")
