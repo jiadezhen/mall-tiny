@@ -60,8 +60,8 @@ jwt:
 aliyun:
   oss:
     endpoint: oss-cn-beijing.aliyuncs.com # oss对外服务的访问域名
-    accessKeyId: LTAI4GAkEMk89Fa5v6F7Mbx8 # 访问身份验证中用到用户标识
-    accessKeySecret: mD6ll15s8SeS4Er1l5XEYcg1H7cmSm # 用户用于加密签名字符串和oss用来验证签名字符串的密钥
+    accessKeyId: test # 访问身份验证中用到用户标识
+    accessKeySecret: test # 用户用于加密签名字符串和oss用来验证签名字符串的密钥
     bucketName: jiadezhen-oss # oss的存储空间
     policy:
       expire: 300 # 签名有效期(S)
