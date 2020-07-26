@@ -3,15 +3,15 @@ package com.macro.mall.tiny.component;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.json.JSONUtil;
-import com.macro.mall.tiny.dto.WebLog;
 import io.swagger.annotations.ApiOperation;
-import org.aspectj.lang.JoinPoint;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -35,49 +35,48 @@ import java.util.Map;
 @Aspect
 @Component
 @Order(1)
+@Slf4j
 public class WebLogAspect {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebLogAspect.class);
 
     @Pointcut("execution(public * com.macro.mall.tiny.controller.*.*(..))")
     public void webLog() {
     }
 
-    @Before("webLog()")
-    public void doBefore(JoinPoint joinPoint) throws Throwable {
-    }
-
-    @AfterReturning(value = "webLog()", returning = "ret")
-    public void doAfterReturning(Object ret) throws Throwable {
-    }
-
     @Around("webLog()")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        long startTime = System.currentTimeMillis();
+        StringBuffer sb = new StringBuffer();
+        String description = "";
         //获取当前请求对象
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         //记录请求信息
-        WebLog webLog = new WebLog();
-        Object result = joinPoint.proceed();
+        long startTime = System.currentTimeMillis();
+        Object result = null;
+        try {
+            result = joinPoint.proceed();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        long endTime = System.currentTimeMillis();
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method method = methodSignature.getMethod();
         if (method.isAnnotationPresent(ApiOperation.class)) {
-            ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
-            webLog.setDescription(apiOperation.value());
+            description = method.getAnnotation(ApiOperation.class).value();
         }
-        long endTime = System.currentTimeMillis();
-        String urlStr = request.getRequestURL().toString();
-        webLog.setBasePath(StrUtil.removeSuffix(urlStr, URLUtil.url(urlStr).getPath()));
-        webLog.setIp(request.getRemoteUser());
-        webLog.setMethod(request.getMethod());
-        webLog.setParameter(getParameter(method, joinPoint.getArgs()));
-        webLog.setResult(result);
-        webLog.setSpendTime((int) (endTime - startTime));
-        webLog.setStartTime(startTime);
-        webLog.setUri(request.getRequestURI());
-        webLog.setUrl(request.getRequestURL().toString());
-        LOGGER.info("{}", JSONUtil.parse(webLog));
+        sb.append("\n----------------------------"+DateFormatUtils.format(startTime,"yyyy-MM-dd HH:mm:ss")+"----------------------------");
+        sb.append("\nURL : "+request.getRequestURL());
+        sb.append("\nDescription : "+description);
+        sb.append("\nBasePath : "+StrUtil.removeSuffix(request.getRequestURL(), URLUtil.url(String.valueOf(request.getRequestURL())).getPath()));
+        sb.append("\nURI( "+request.getMethod()+" ) : "+request.getRequestURI());
+        sb.append("\nSpendTime  : "+(endTime - startTime)+"ms");
+        sb.append("\nUserName   : "+request.getRemoteUser());
+        sb.append("\nController : "+joinPoint.getTarget().getClass().getName()+"("+joinPoint.getTarget().getClass().getSimpleName()+".java:1)");
+        sb.append("\nMethod     : "+joinPoint.getSignature().getName());
+        sb.append("\nParameters : "+JSONUtil.parse(getParameter(method, joinPoint.getArgs())));
+        sb.append("\nReturn     : "+JSONUtil.parse(result));
+        sb.append("\n-------------------------------------------------------------------------------------------\n\n");
+        log.info(String.valueOf(sb));
         return result;
     }
 
