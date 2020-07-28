@@ -12,7 +12,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +33,6 @@ import java.util.Map;
  */
 @Aspect
 @Component
-@Order(1)
 @Slf4j
 public class WebLogAspect {
 
@@ -44,6 +42,17 @@ public class WebLogAspect {
 
     @Around("webLog()")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        try {
+            Object result = joinPoint.proceed();
+            printLogInfo(joinPoint,result);
+            return result;
+        } catch (Exception e) {
+            printLogInfo(joinPoint,null);
+            throw e;
+        }
+    }
+    
+    public void printLogInfo(ProceedingJoinPoint joinPoint,Object result){
         StringBuffer sb = new StringBuffer();
         String description = "";
         //获取当前请求对象
@@ -51,12 +60,6 @@ public class WebLogAspect {
         HttpServletRequest request = attributes.getRequest();
         //记录请求信息
         long startTime = System.currentTimeMillis();
-        Object result = null;
-        try {
-            result = joinPoint.proceed();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         long endTime = System.currentTimeMillis();
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
@@ -75,9 +78,8 @@ public class WebLogAspect {
         sb.append("\nMethod     : "+joinPoint.getSignature().getName());
         sb.append("\nParameters : "+JSONUtil.parse(getParameter(method, joinPoint.getArgs())));
         sb.append("\nReturn     : "+JSONUtil.parse(result));
-        sb.append("\n-------------------------------------------------------------------------------------------\n\n");
+        sb.append("\n-------------------------------------------------------------------------------------------\n");
         log.info(String.valueOf(sb));
-        return result;
     }
 
     /**
