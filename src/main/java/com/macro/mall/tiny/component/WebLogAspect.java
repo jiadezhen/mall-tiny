@@ -43,24 +43,25 @@ public class WebLogAspect {
     @Around("webLog()")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
+            long startTime = System.currentTimeMillis();
             Object result = joinPoint.proceed();
-            printLogInfo(joinPoint,result);
+            long endTime = System.currentTimeMillis();
+            printLogInfo(joinPoint,result,startTime,endTime);
             return result;
         } catch (Exception e) {
-            printLogInfo(joinPoint,null);
+            printLogInfo(joinPoint,null,null,null);
             throw e;
         }
     }
     
-    public void printLogInfo(ProceedingJoinPoint joinPoint,Object result){
+    public void printLogInfo(ProceedingJoinPoint joinPoint,Object result,Long startTime,Long endTime){
         StringBuffer sb = new StringBuffer();
-        String description = "";
         //获取当前请求对象
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         //记录请求信息
-        long startTime = System.currentTimeMillis();
-        long endTime = System.currentTimeMillis();
+        String description = "";
+        String spendTime = startTime == null ? "--" : (endTime - startTime)+"ms";
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method method = methodSignature.getMethod();
@@ -72,7 +73,7 @@ public class WebLogAspect {
         sb.append("\nDescription : "+description);
         sb.append("\nBasePath : "+StrUtil.removeSuffix(request.getRequestURL(), URLUtil.url(String.valueOf(request.getRequestURL())).getPath()));
         sb.append("\nURI( "+request.getMethod()+" ) : "+request.getRequestURI());
-        sb.append("\nSpendTime  : "+(endTime - startTime)+"ms");
+        sb.append("\nSpendTime  : "+spendTime);
         sb.append("\nUserName   : "+request.getRemoteUser());
         sb.append("\nController : "+joinPoint.getTarget().getClass().getName()+"("+joinPoint.getTarget().getClass().getSimpleName()+".java:1)");
         sb.append("\nMethod     : "+joinPoint.getSignature().getName());
