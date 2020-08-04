@@ -42,14 +42,14 @@ public class WebLogAspect {
 
     @Around("webLog()")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
         try {
-            long startTime = System.currentTimeMillis();
             Object result = joinPoint.proceed();
             long endTime = System.currentTimeMillis();
             printLogInfo(joinPoint,result,startTime,endTime);
             return result;
         } catch (Exception e) {
-            printLogInfo(joinPoint,null,null,null);
+            printLogInfo(joinPoint,null,startTime,null);
             throw e;
         }
     }

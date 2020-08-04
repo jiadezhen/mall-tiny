@@ -85,7 +85,6 @@ public class PmsBrandController {
     public CommonResult<CommonPage<PmsBrand>> listBrand(@RequestParam(value = "pageNum", defaultValue = "1")@ApiParam("页码") Integer pageNum,
                                                         @RequestParam(value = "pageSize", defaultValue = "3")@ApiParam("每页数量") Integer pageSize) {
         List<PmsBrand> brandList = demoService.listBrand(pageNum, pageSize);
-        int i = 8/0;
         return CommonResult.success(CommonPage.restPage(brandList));
     }
 
