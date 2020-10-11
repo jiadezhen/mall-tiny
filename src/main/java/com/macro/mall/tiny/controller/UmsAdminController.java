@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -43,7 +44,7 @@ public class UmsAdminController {
 
     @ApiOperation(value = "登录以后返回token")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public CommonResult login(@RequestBody UmsAdminLoginParam umsAdminLoginParam, BindingResult result) {
+    public CommonResult login(@Validated @RequestBody UmsAdminLoginParam umsAdminLoginParam) {
         String token = adminService.login(umsAdminLoginParam.getUsername(), umsAdminLoginParam.getPassword());
         if (token == null) {
             return CommonResult.validateFailed("用户名或密码错误");
@@ -52,6 +53,12 @@ public class UmsAdminController {
         tokenMap.put("token", token);
         tokenMap.put("tokenHead", tokenHead);
         return CommonResult.success(tokenMap);
+    }
+
+    @ApiOperation(value = "登出功能")
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public CommonResult logout() {
+        return CommonResult.success(null);
     }
 
     @ApiOperation(value = "获取当前登录用户信息")
