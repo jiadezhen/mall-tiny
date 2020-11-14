@@ -32,6 +32,12 @@ public class UmsAdminController {
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
+    @ApiOperation(value = "测试接口")
+    @GetMapping("/testApi")
+    public CommonResult testApi() {
+        return CommonResult.success("testApi成功");
+    }
+
     @ApiOperation(value = "用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public CommonResult<UmsAdmin> register(@RequestBody UmsAdmin umsAdminParam, BindingResult result) {
