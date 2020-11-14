@@ -35,7 +35,6 @@ public class UmsAdminController {
     @ApiOperation(value = "测试接口")
     @GetMapping("/testApi")
     public CommonResult testApi() {
-        System.out.println("1111111111111111111111111111111111111111");
         return CommonResult.success("testApi成功");
     }
 
